@@ -1,0 +1,111 @@
+/*
+ * Copyright (C) 2020 Robert Nelson <robertcnelson@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/board/am335x-bbw-bbb-base.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/am33xx.h>
+
+
+/ {
+        /*
+         * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+         */
+        fragment@0 {
+                target-path="/";
+                __overlay__ {
+
+                        chosen {
+                                overlays {
+                                        BB-CONTROL-LED-00A0 = __TIMESTAMP__;
+                                };
+                        };
+                };
+        };
+
+        /*
+         * Free up the pins used by the cape from the pinmux helpers.
+         */
+        fragment@1 {
+                target = <&ocp>;
+                __overlay__ {
+                        P8_25_pinmux { status = "disabled"; };
+                        P8_24_pinmux { status = "disabled"; };
+                        P8_23_pinmux { status = "disabled"; };
+                        P8_22_pinmux { status = "disabled"; };
+                        P8_06_pinmux { status = "disabled"; };
+                        P8_03_pinmux { status = "disabled"; };
+                };
+        };
+
+        fragment@2 {
+                target = <&am33xx_pinmux>;
+                __overlay__ {
+
+                        bb_gpio_led_pins: pinmux_bb_gpio_led_pins {
+                                pinctrl-single,pins = <
+                                        BONE_P8_25 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
+                                        BONE_P8_24 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
+                                        BONE_P8_23 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
+                                        BONE_P8_22 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
+                                        BONE_P8_06 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
+                                        BONE_P8_03 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
+                                >;
+                        };
+                };
+        };
+        fragment@3 {
+                target-path="/";
+                __overlay__ {
+
+                        leds {
+                                pinctrl-names = "default";
+                                pinctrl-0 = <&bb_gpio_led_pins>;
+
+                                compatible = "gpio-leds";
+
+                                P8_25 {
+                                        label = "P8_25";
+                                        gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+                                        default-state = "off";
+                                };
+                                P8_24 {
+                                        label = "P8_24";
+                                        gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+                                        default-state = "off";
+                                };
+                                P8_23 {
+                                        label = "P8_23";
+                                        gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+                                        default-state = "off";
+                                };
+                                P8_22 {
+                                        label = "P8_22";
+                                        gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+                                        default-state = "off";
+                                };
+                                P8_06 {
+                                        label = "P8_25";
+                                        gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
+                                        default-state = "off";
+                                };
+                                P8_03 {
+                                        label = "P8_25";
+                                        gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+                                        default-state = "off";
+                                };
+
+
+                        };
+                };
+        };
+
+
+};
